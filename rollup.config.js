@@ -5,6 +5,7 @@
  *   rollup -c
  */
 
+const {dirname} = require('node:path');
 const {env} = require('node:process');
 const prod = env.NODE_ENV == 'production';
 
@@ -14,20 +15,23 @@ const replace = require('@rollup/plugin-replace');
 const strip = require('@rollup/plugin-strip');
 const vue = require('rollup-plugin-vue');
 
+const {name, paths: {dist_js, src_js}} = require('./build.json');
+const src_js_dir = dirname(src_js);
+
 const M = {
-	input: 'src/js/main.js',
+	input: src_js,
 	output: {
-		name: 'my_app',
-		file: 'app/bundle.js',
+		name,
+		file: dist_js,
 		format: 'iife',
 		indent: !prod,
 		sourcemap: !prod,
 		compact: prod,
-	},
+},
 	treeshake: prod,
 	watch: {
 		include: [
-			'src/js/**',
+			`${src_js_dir}/**`,
 			'package.json',
 		],
 	},
@@ -49,7 +53,7 @@ const M = {
 if (prod) {
 	M.plugins.push(
 		strip({
-			include: 'src/js/**/*.js',
+			include: `${src_js_dir}/**/*.js`,
 			functions: [
 				'console.log',
 				'console.debug',

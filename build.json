@@ -1,0 +1,9 @@
+{
+  "name": "my_app",
+  "paths": {
+    "dist_js":  "app/js/main.js",
+    "src_js":   "src/js/main.js",
+    "src_html": "src/html",
+    "src_less": "src/less"
+  }
+}
