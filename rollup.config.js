@@ -16,7 +16,7 @@ const strip = require('@rollup/plugin-strip');
 const vue = require('rollup-plugin-vue');
 
 const {name, paths: {dist_js, src_js}} = require('./build.json');
-const src_js_dir = dirname(src_js);
+const dir = {src_js: dirname(src_js)};
 
 const M = {
 	input: src_js,
@@ -31,7 +31,7 @@ const M = {
 	treeshake: prod,
 	watch: {
 		include: [
-			`${src_js_dir}/**`,
+			`${dir.src_js}/**`,
 			'package.json',
 		],
 	},
@@ -53,7 +53,7 @@ const M = {
 if (prod) {
 	M.plugins.push(
 		strip({
-			include: `${src_js_dir}/**/*.js`,
+			include: `${dir.src_js}/**/*.js`,
 			functions: [
 				'console.log',
 				'console.debug',
