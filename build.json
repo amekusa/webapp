@@ -1,5 +1,6 @@
 {
   "name": "my_app",
+  "lang": "en",
   "paths": {
     "dist":     "app",
     "dist_css": "css/style.css",
