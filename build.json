@@ -1,7 +1,7 @@
 {
-  "name": "my_app",
-  "title": "My App",
-  "lang": "en",
+  "name":       "my_app",
+  "title":      "My App",
+  "lang":       "en",
   "paths": {
     "dist":     "app",
     "dist_css": "css/style.css",
