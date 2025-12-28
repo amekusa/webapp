@@ -20,8 +20,7 @@ const $rename = require('gulp-rename');
 // misc.
 const {rollup} = require('rollup');
 const bs = require('browser-sync').create();
-const {io, sh} = require('@amekusa/nodeutil');
-const {subst} = require('./util.js');
+const {subst, io, sh} = require('@amekusa/util.js');
 const {minifyJS, minifyCSS} = require('./minify.js');
 
 // shortcuts
@@ -52,6 +51,7 @@ const {
 // context
 const C = {
 	rollup: null, // rollup config
+	imported: null, // HTML for imported assets
 };
 
 // tasks
@@ -170,25 +170,51 @@ const T = {
 		let src = `${paths.src}/index.html`;
 		return $.src(src)
 			.pipe(io.modifyStream((content, enc) => {
-				return subst(content, config, (v, k) => {
-					if (prod) {
-						switch (k) {
-						case 'paths.dist_js':
-							v = io.ext(v, '.min.js');
-							break;
-						case 'paths.dist_css':
-							v = io.ext(v, '.min.css');
-							break;
+				let r = content;
+				let data = Object.assign({
+					imported: C.imported,
+				}, config);
+				r = subst(r, data, {
+					modifier(v, k) {
+						if (prod) {
+							switch (k) {
+							case 'paths.dist_js':
+								v = io.ext(v, '.min.js');
+								break;
+							case 'paths.dist_css':
+								v = io.ext(v, '.min.css');
+								break;
+							}
 						}
+						return v;
 					}
-					return v;
 				});
+				return r;
 			}))
 			.pipe($.dest(dst));
 	},
 
-	watch() {
+	html_assets(done) {
+		let {imports} = config;
+		if (!imports) return done();
+		if (C.imported) return done();
+		let importer = new io.AssetImporter({
+			minify: prod,
+			src: paths.src,
+			dst: paths.dist,
+		});
+		importer.add(imports);
+		return new Promise((done, fail) => {
+			importer.import();
+			C.imported = {};
+			for (let k in importer.results) {
+				C.imported[k] = importer.toHTML(k);
+			}
+			return done();
+		});
+	},
 
+	watch() {
 		// auto-build js
 		$.watch([
 			`${dirs.src_js}/**/*.js`,
@@ -221,7 +247,10 @@ T.css = prod ? $S(
 	T.css_minify
 ) : T.css_build;
 
-T.html = T.html_build;
+T.html = $S(
+	T.html_assets,
+	T.html_build,
+);
 
 T.build = $P(
 	T.js,
