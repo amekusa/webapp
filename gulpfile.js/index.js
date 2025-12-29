@@ -171,11 +171,10 @@ const T = {
 		let src = `${paths.src}/index.html`;
 		return $.src(src)
 			.pipe(io.modifyStream((content, enc) => {
-				let r = content;
 				let data = Object.assign({
 					imported: C.imported,
 				}, config);
-				r = subst(r, data, {
+				return subst(content, data, {
 					modifier(v, k) {
 						if (prod) {
 							switch (k) {
@@ -190,7 +189,6 @@ const T = {
 						return v;
 					}
 				});
-				return r;
 			}))
 			.pipe($.dest(dst));
 	},
@@ -205,13 +203,11 @@ const T = {
 			dst: paths.dist,
 		});
 		importer.add(imports);
-		return new Promise((done, fail) => {
-			importer.import();
+		return importer.import().then(() => {
 			C.imported = {};
 			for (let k in importer.results) {
 				C.imported[k] = importer.toHTML(k);
 			}
-			return done();
 		});
 	},
 
