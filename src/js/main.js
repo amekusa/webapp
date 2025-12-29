@@ -1,14 +1,15 @@
 import {createApp} from 'vue';
-import {createWebHistory, createRouter} from 'vue-router';
+import {createRouter, createWebHistory} from 'vue-router';
+
+// Helper functions
+import {greet} from './fn.js';
 
 // Vue components
 import App from './vue/App.vue'; // Base component
 import Home from './vue/Home.vue';
 import About from './vue/About.vue';
 
-// Helper functions
-import {greet} from './fn.js';
-
+// Vue router
 const router = createRouter({
 	history: createWebHistory(),
 	routes: [
