@@ -70,11 +70,12 @@ const T = {
 
 	run(done) {
 		return bs.active ? done() : bs.init({
-			open: false,
 			server: {
 				baseDir: paths.dist,
 				index: 'index.html',
 			},
+			single: true, // Required for vue-router
+			open: false,
 			injectNotification: 'overlay', // console | overlay
 			injectFileTypes: ['css', 'png', 'jpg', 'jpeg', 'svg', 'gif', 'webp', 'map'],
 				// NOTE: Add 'js' to enable JS injection
