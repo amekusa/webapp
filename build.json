@@ -9,5 +9,11 @@
     "src":      "src",
     "src_css":  "css/style.less",
     "src_js":   "js/main.js"
+  },
+  "imports": [
+  ],
+  "tweaks": {
+    "nojekyll": true,
+    "404_fallback": true
   }
 }

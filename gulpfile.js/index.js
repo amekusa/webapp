@@ -89,7 +89,6 @@ const T = {
 
 	js_build() {
 		bs.notify(`Building JS...`);
-
 		let conf = C.rollup;
 		if (conf) {
 			if (typeof conf.cache == 'object') log(`Rollup: Cache is used.`);
@@ -170,7 +169,7 @@ const T = {
 	html_build() {
 		let dst = paths.dist;
 		let src = `${paths.src}/index.html`;
-		return $.src(src)
+		let r = $.src(src)
 			.pipe(io.modifyStream((content, enc) => {
 				let data = Object.assign({
 					imported: C.imported,
@@ -192,6 +191,11 @@ const T = {
 				});
 			}))
 			.pipe($.dest(dst));
+
+		if (config.tweaks['404_fallback']) {
+			r = r.pipe($rename('404.html')).pipe($.dest(dst));
+		}
+		return r;
 	},
 
 	html_assets(done) {
@@ -204,6 +208,9 @@ const T = {
 			dst: paths.dist,
 		});
 		importer.add(imports);
+		if (config.tweaks.nojekyll) {
+			importer.add({resolve: 'create', as: '.nojekyll', src: '', dst: '.'});
+		}
 		return importer.import().then(() => {
 			C.imported = {};
 			for (let k in importer.results) {
