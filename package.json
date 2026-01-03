@@ -20,5 +20,9 @@
     "three": "^0.182.0",
     "vue": "^3.5.26",
     "vue-router": "^4.6.4"
+  },
+  "boilerplate": {
+    "repository": "https://github.com/amekusa/spa.ce.git",
+    "version": "1.0.0"
   }
 }
